@@ -45,7 +45,7 @@ role_set1 = [
     'Villager',
     'Villager',
     'Villager',
-    'Werewolf'
+    'WolfCub'
 ]
 
 print("Hello Village")
@@ -73,6 +73,7 @@ for i in range(len(players)):
 
 villagers = []
 werewolves = []
+seer = []
 loveBirds = []
 hoodlumTargets = []
 cultSects = []
@@ -94,6 +95,8 @@ for each in player_dict:
     #     tanner = player_dict[each].name
     else:
         villagers.append(player_dict[each].name)
+        if (player_dict[each].role == 'Seer'):
+            seer.append(player_dict[each].name)
 
 
 # iterate for character
@@ -125,8 +128,29 @@ def seer_selection():
     else:
         return "GOOD"
 
+# Sorceress selection
+
+
+def sorceress_selection():
+    print("sorceress select a person to find out Seer")
+    selected_player = int(input())
+    if (player_dict[selected_player].role == 'Seer'):
+        return "YES"
+    else:
+        return "NO"
+
+# mentalist selection ---- pending
+
+
+def mentalist_selection():
+    print("select two people to find out if their belong to same team or not, select one")
+    selected_player1 = int(input())
+    print(" select other")
+    selected_player2 = int(input())
 
 # BodyGuard Protection
+
+
 def bodyguard_protection():
     print("protect a player")
     selected_player = int(input())
@@ -174,6 +198,14 @@ def hoodlum_hunt(player_dict, hoodlumTargets):
     else:
         return 0
 
+# spellcaster's spell
+
+
+def spellcaster_spell():
+    print("select a player to mute")
+    selected_player = int(input())
+    return selected_player
+
 # Village Voting
 
 
@@ -189,7 +221,9 @@ def village_voting():
         eliminated_role = player_dict[selected_player].role
         if (eliminated_role == 'Villager'):
             villagers.remove(selected_player)
-        elif (eliminated_role == 'Wereolf'):
+            if (eliminated_role == 'Seer'):
+                seer.remove(selected_player)
+        elif (eliminated_role == 'Werewolf'):
             werewolves.remove(selected_player)
         print(eliminated_role + 'is eliminated')
 
@@ -206,13 +240,26 @@ def night_one():
 
     """
     getting_killed = werewolves_killing()
-    print(seer_selection())
+    if (len(seer) != 0):
+        print(seer_selection())
+    if (sorceress_life):
+        print(sorceress_selection())
+    if (mentalist_life):
+        print(mentalist_selection())
     getting_protected = bodyguard_protection()
+    muted = spellcaster_spell()
+
+    print(str(muted)+' is muted')
+    if (player_dict[getting_killed].role == 'Seer'):
+        seer.remove(getting_killed)
+    if (player_dict[getting_killed].role == 'Sorceress'):
+        sorceress_life = 0
+
     if (getting_killed == getting_protected):
         print("No one is dead")
     else:
         player_dict[getting_killed].life = 0
-        print(str(player_dict[getting_killed].name) + ' ,who is a ' +
+        print(str(player_dict[getting_killed].name) + ', who is a ' +
               player_dict[getting_killed].role + " is dead")
 
 
@@ -228,6 +275,7 @@ print(werewolves)
 
 print("our Villagers")
 print(villagers)
+sorceress_life = 1
 
 while (True):
     night_one()
